@@ -1,0 +1,99 @@
+[
+  {
+    "action": "ADMIN_LOGIN",
+    "by": "admin",
+    "time": "2026-06-14T14:16:44.019Z"
+  },
+  {
+    "action": "ADMIN_LOGIN",
+    "by": "admin",
+    "time": "2026-06-14T14:37:47.539Z"
+  },
+  {
+    "action": "ADMIN_LOGIN",
+    "by": "admin",
+    "time": "2026-06-14T14:39:12.943Z"
+  },
+  {
+    "action": "ADMIN_LOGIN",
+    "by": "admin",
+    "time": "2026-06-14T14:39:59.360Z"
+  },
+  {
+    "action": "ADMIN_LOGIN",
+    "by": "admin",
+    "time": "2026-06-14T14:40:37.443Z"
+  },
+  {
+    "action": "ADMIN_LOGIN",
+    "by": "admin",
+    "time": "2026-06-14T14:41:06.276Z"
+  },
+  {
+    "action": "ADMIN_LOGIN",
+    "by": "admin",
+    "time": "2026-06-14T14:41:58.165Z"
+  },
+  {
+    "action": "ADMIN_LOGIN",
+    "by": "admin",
+    "time": "2026-06-14T14:42:58.849Z"
+  },
+  {
+    "action": "ADMIN_LOGIN",
+    "by": "admin",
+    "time": "2026-06-14T14:43:26.457Z"
+  },
+  {
+    "action": "ADMIN_LOGIN",
+    "by": "admin",
+    "time": "2026-06-14T14:51:25.429Z"
+  },
+  {
+    "action": "ADMIN_LOGIN",
+    "by": "admin",
+    "time": "2026-06-14T14:53:07.336Z"
+  },
+  {
+    "action": "CLEAR_EVENTS",
+    "by": "admin",
+    "reason": "pre",
+    "clearedCount": 9,
+    "time": "2026-06-14T14:54:15.540Z"
+  },
+  {
+    "action": "ADMIN_LOGIN",
+    "by": "admin",
+    "time": "2026-06-14T15:05:25.188Z"
+  },
+  {
+    "action": "ADMIN_LOGIN",
+    "by": "admin",
+    "time": "2026-06-14T15:40:29.699Z"
+  },
+  {
+    "action": "ADMIN_LOGIN",
+    "by": "admin",
+    "time": "2026-06-14T15:43:44.765Z"
+  },
+  {
+    "action": "ADMIN_LOGIN",
+    "by": "admin",
+    "time": "2026-06-14T16:20:51.657Z"
+  },
+  {
+    "action": "ADMIN_LOGIN",
+    "by": "admin",
+    "time": "2026-06-14T16:26:08.291Z"
+  },
+  {
+    "action": "ADMIN_LOGIN",
+    "by": "admin",
+    "time": "2026-06-14T16:26:53.974Z"
+  },
+  {
+    "action": "ADMIN_LOGIN",
+    "by": "admin",
+    "time": "2026-06-14T16:35:49.357Z"
+  }
+]

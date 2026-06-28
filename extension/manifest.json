@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "Shadow AI Detector",
+  "version": "2.0",
+  "description": "Detects and monitors risky Shadow AI usage in organizational environments",
+  "permissions": ["activeTab", "storage", "tabs"],
+  "host_permissions": ["<all_urls>"],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://chat.openai.com/*",
+        "*://*.openai.com/*",
+        "*://chatgpt.com/*",
+        "*://*.chatgpt.com/*",
+        "*://claude.ai/*",
+        "*://*.claude.ai/*",
+        "*://gemini.google.com/*",
+        "*://copilot.microsoft.com/*",
+        "*://*.copilot.microsoft.com/*",
+        "*://bard.google.com/*",
+        "*://character.ai/*",
+        "*://*.character.ai/*",
+        "*://perplexity.ai/*",
+        "*://*.perplexity.ai/*",
+        "*://you.com/*",
+        "*://*.you.com/*",
+        "*://huggingface.co/*",
+        "*://*.huggingface.co/*"
+      ],
+      "js": ["sensitive-keywords.js","content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": { "default_popup": "popup.html" }
+}

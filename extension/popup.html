@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  body { width: 260px; margin: 0; font-family: Arial, sans-serif; background: #0F172A; color: #E2E8F0; }
+  .wrap { padding: 16px; }
+  .title { font-size: 15px; font-weight: bold; margin-bottom: 12px; }
+  .status { display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 14px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: #22D3EE; box-shadow: 0 0 8px #22D3EE; }
+  a.btn { display: block; text-align: center; background: #22D3EE; color: #0F172A; text-decoration: none;
+          font-weight: bold; padding: 9px; border-radius: 8px; font-size: 13px; }
+  .muted { color: #94A3B8; font-size: 11px; margin-top: 12px; line-height: 1.5; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="title">Shadow AI Detector</div>
+    <div class="status"><span class="dot"></span> Monitoring active</div>
+    <a class="btn" href="http://localhost:3000/dashboard.html" target="_blank">Open dashboard</a>
+    <div class="muted">Watching for risky uploads, pastes, sensitive keywords and data patterns on AI tools.</div>
+  </div>
+</body>
+</html>
