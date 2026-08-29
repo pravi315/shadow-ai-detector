@@ -3,7 +3,7 @@
 // Pure Node.js, ZERO external packages. Run:  node server.js
 // ------------------------------------------------------------
 // - Receives behaviour events from the Chrome extension
-// - Classifies them with 5 detection rules
+// - Classifies them with 6 detection rules
 // - Serves the admin dashboard
 // - Admin login + tamper-resistant audit trail
 // ============================================================
@@ -19,9 +19,15 @@ const DB_FILE = path.join(__dirname, "events.json");
 const AUDIT_FILE = path.join(__dirname, "audit.json");
 const DASHBOARD_FILE = path.join(__dirname, "../dashboard/dashboard.html");
 
-// ── Admin credentials (change these for a real deployment) ──
-const ADMIN_USER = "admin";
-const ADMIN_PASS = "12341234";
+// ── Admin credentials ────────────────────────────────────────
+// Overridable via environment variables (SAI_ADMIN_USER / SAI_ADMIN_PASS)
+// so real credentials are never hardcoded or committed. Falls back to the
+// original demo defaults ONLY so local/offline testing keeps working out
+// of the box — a clear warning prints at startup whenever that fallback
+// is in use (see server.listen below).
+const ADMIN_USER = process.env.SAI_ADMIN_USER || "admin";
+const ADMIN_PASS = process.env.SAI_ADMIN_PASS || "12341234";
+const USING_DEFAULT_CREDS = !process.env.SAI_ADMIN_USER || !process.env.SAI_ADMIN_PASS;
 
 // In-memory login tokens { token: expiryTimestamp }. 2-hour sessions.
 const sessions = {};
@@ -49,23 +55,23 @@ function appendAudit(entry) {
 const RANK = { NONE: 0, LOW: 1, MEDIUM: 2, HIGH: 3 };
 const higher = (a, b) => (RANK[a] >= RANK[b] ? a : b);
 
-// ── Risk Classification Engine (5 rules) ────────────────────
+// ── Risk Classification Engine (6 rules) ────────────────────
 function classifyEvent(event) {
-  const { type, pasteLength, keywords, promptCount, text } = event;
+  const { type, pasteLength, keywords, promptCount, text, pasteCount, bulk } = event;
   let risk = "LOW";
   const flags = [];
 
-  // Rule 1 — File upload to an AI tool
+  // Rule 1 — File upload to an AI tool or social platform
   if (type === "file_upload") {
     risk = higher(risk, "HIGH");
-    flags.push("File upload to AI tool");
+    flags.push(bulk ? "Bulk file upload (multiple files at once)" : "File upload to AI tool");
   }
   // Rule 2 — Sensitive keyword match
   if (type === "sensitive_keyword" && keywords && keywords.length > 0) {
     risk = higher(risk, "HIGH");
     flags.push("Sensitive keywords: " + keywords.join(", "));
   }
-  // Rule 3 — Large clipboard paste
+  // Rule 3 — Large clipboard paste (SIZE of one paste)
   if (type === "large_paste") {
     if (pasteLength > 2000) { risk = higher(risk, "HIGH"); flags.push("Very large paste: " + pasteLength + " chars"); }
     else { risk = higher(risk, "MEDIUM"); flags.push("Large paste: " + pasteLength + " chars"); }
@@ -82,6 +88,12 @@ function classifyEvent(event) {
       risk = higher(risk, pat.risk);
       flags.push("Pattern match: " + pat.matches.join(", "));
     }
+  }
+  // Rule 6 — Bulk/rapid paste activity (FREQUENCY of many separate pastes,
+  // as opposed to Rule 3's SIZE of one paste — catches piecemeal exfiltration)
+  if (type === "bulk_paste") {
+    risk = higher(risk, "MEDIUM");
+    flags.push("Bulk paste activity: " + (pasteCount || "multiple") + " pastes in 60s");
   }
 
   return { risk, flags };
@@ -131,7 +143,8 @@ const server = http.createServer((req, res) => {
         risk,
         flags,
         detail: data.detail || "",
-        timestamp: data.timestamp || new Date().toISOString()
+        timestamp: data.timestamp || new Date().toISOString(),
+        simulated: data.simulated === true // true only for Demo Simulator events, never for real extension captures
       };
       const events = loadEvents();
       events.unshift(record);
@@ -210,4 +223,8 @@ server.listen(PORT, () => {
   console.log("\n  Shadow AI Detector Backend (zero dependencies)");
   console.log("   Server:    http://localhost:" + PORT);
   console.log("   Dashboard: http://localhost:" + PORT + "/dashboard.html\n");
+  if (USING_DEFAULT_CREDS) {
+    console.warn("  ⚠  Using default admin credentials (admin/12341234).");
+    console.warn("     Set SAI_ADMIN_USER and SAI_ADMIN_PASS env vars before any real deployment.\n");
+  }
 });

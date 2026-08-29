@@ -1,0 +1,11 @@
+# Runtime/generated data - not source code, changes every run
+backend/events.json
+backend/audit.json
+evaluation/results.json
+
+# Dependencies
+node_modules/
+
+# OS/editor junk
+.DS_Store
+Thumbs.db

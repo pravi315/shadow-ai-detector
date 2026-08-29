@@ -112,13 +112,14 @@
       <button class="sim" onclick="sim('paste')">Large paste</button>
       <button class="sim" onclick="sim('upload')">File upload</button>
       <button class="sim" onclick="sim('rapid')">Rapid prompts</button>
+      <button class="sim" onclick="sim('bulk')">Bulk paste</button>
     </div>
   </div>
 
   <div class="panel">
     <h2>Live event feed</h2>
     <table>
-      <thead><tr><th>Time</th><th>Source</th><th>Type</th><th>Risk</th><th>Detail</th></tr></thead>
+      <thead><tr><th>Date &amp; Time</th><th>Source</th><th>Type</th><th>Risk</th><th>Detail</th></tr></thead>
       <tbody id="feed"><tr><td colspan="5" class="empty">Waiting for events…</td></tr></tbody>
     </table>
   </div>
@@ -157,7 +158,14 @@ function badge(risk){
   const c = risk==="HIGH"?"b-high":risk==="MEDIUM"?"b-med":"b-low";
   return '<span class="badge '+c+'">'+risk+'</span>';
 }
-function fmtTime(iso){ try{return new Date(iso).toLocaleTimeString();}catch(e){return iso;} }
+function fmtTime(iso){
+  try{
+    const d = new Date(iso);
+    const datePart = d.toLocaleDateString(undefined, { day:"2-digit", month:"short", year:"numeric" });
+    const timePart = d.toLocaleTimeString();
+    return datePart + ", " + timePart;
+  }catch(e){ return iso; }
+}
 
 async function refresh(){
   try{
@@ -172,7 +180,9 @@ async function refresh(){
     if(!events.length){ feed.innerHTML='<tr><td colspan="5" class="empty">Waiting for events…</td></tr>'; return; }
     feed.innerHTML = events.map(e=>
       '<tr><td>'+fmtTime(e.timestamp)+'</td>'+
-      '<td class="src">'+(e.source||"")+'</td>'+
+      '<td class="src">'+(e.source||"")+
+        (e.simulated ? ' <span style="font-size:10px;color:#94a3b8;border:1px solid #334155;border-radius:4px;padding:1px 5px;margin-left:4px;">SIMULATED</span>' : '') +
+      '</td>'+
       '<td>'+(e.type||"")+'</td>'+
       '<td>'+badge(e.risk)+'</td>'+
       '<td class="flags">'+((e.flags&&e.flags.join("; "))||e.detail||"")+'</td></tr>'
@@ -198,9 +208,14 @@ function sim(kind){
     card:    {type:"paste", text:"charge the card 4539 1488 0343 6467 today", source:"gemini.google.com"},
     paste:   {type:"large_paste", pasteLength:3200, text:"(large confidential document pasted)", source:"chatgpt.com"},
     upload:  {type:"file_upload", detail:"Approved by user: salary_data.xlsx", source:"claude.ai"},
-    rapid:   {type:"rapid_prompts", promptCount:12, source:"perplexity.ai"}
+    rapid:   {type:"rapid_prompts", promptCount:12, source:"perplexity.ai"},
+    bulk:    {type:"bulk_paste", pasteCount:6, source:"facebook.com"}
   };
-  const ev = map[kind]; ev.url="https://"+ev.source; ev.timestamp=new Date().toISOString();
+  const ev = map[kind];
+  // Mark this as synthetic demo data — NOT a real captured browser event —
+  // so it's never mistaken for a live extension capture in the feed or in reports.
+  ev.simulated = true;
+  ev.url="https://"+ev.source; ev.timestamp=new Date().toISOString();
   fetch(API+"/api/events",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(ev)})
     .then(()=>refresh());
 }
